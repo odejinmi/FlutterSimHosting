@@ -7,10 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
+// import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'globalvariable.dart';
+import 'ussdservice.dart';
 
-var prefs = GetStorage();
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
@@ -51,8 +54,8 @@ Future<void> initializeService() async {
       isForegroundMode: true,
 
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'AWESOME SERVICE',
-      initialNotificationContent: 'Initializing',
+      initialNotificationTitle: 'Hosy Mobile Sim',
+      initialNotificationContent: 'Auto Start Service',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -78,14 +81,14 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  // SharedPreferences preferences = await SharedPreferences.getInstance();
-  // await preferences.reload();
-  // final log = preferences.getStringList('log') ?? <String>[];
-  // log.add(DateTime.now().toIso8601String());
-  // await preferences.setStringList('log', log);
-  final log = prefs.read('log') ?? <String>[];
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.reload();
+  final log = preferences.getStringList('log') ?? <String>[];
   log.add(DateTime.now().toIso8601String());
-  prefs.write('log', log);
+  await preferences.setStringList('log', log);
+  // final log = prefs.read('log') ?? <String>[];
+  // log.add(DateTime.now().toIso8601String());
+  // prefs.write('log', log);
 
   return true;
 }
@@ -98,9 +101,9 @@ void onStart(ServiceInstance service) async {
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
 
-  // SharedPreferences preferences = await SharedPreferences.getInstance();
-  // await preferences.setString("hello", "world");
-  prefs.write("hello", "world");
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.setString("hello", "world");
+  // prefs.write("hello", "world");
 
   /// OPTIONAL when use custom notification
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -120,8 +123,9 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
+  var controller = Get.put(Globalvariable(), permanent: true);
   // bring to foreground
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  Timer.periodic(const Duration(seconds: 10), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         /// OPTIONAL for use custom notification
@@ -141,10 +145,13 @@ void onStart(ServiceInstance service) async {
         );
 
         // if you don't using custom notification, uncomment this
-        // service.setForegroundNotificationInfo(
-        //   title: "My App Service",
-        //   content: "Updated at ${DateTime.now()}",
-        // );
+        service.setForegroundNotificationInfo(
+          title: "Host Mobile Sim",
+          content: "Auto Start Service",
+        );
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        controller.token = preferences.getString('token')??"you";
+        getUSSD();
       }
     }
 

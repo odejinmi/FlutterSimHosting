@@ -10,8 +10,8 @@ class messagedetailsController extends GetxController with WidgetsBindingObserve
 @override
 void didChangeAppLifecycleState(AppLifecycleState state) {
   super.didChangeAppLifecycleState(state);
-  // Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
-  isInForeground = state == AppLifecycleState.resumed;
+  Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
+  // isInForeground = state == AppLifecycleState.resumed;
   update();
   // switch(state){
   //

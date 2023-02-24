@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttersimhosting/app/data/provider/globalvariable.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
 
 import '../../component/custom_alert_dialog.dart';
 
@@ -12,8 +12,7 @@ class ApiProvider extends GetConnect with WidgetsBindingObserver implements Getx
 @override
 void didChangeAppLifecycleState(AppLifecycleState state) {
   super.didChangeAppLifecycleState(state);
-  // Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
-  isInForeground = state == AppLifecycleState.resumed;
+  controller.isInForeground = state == AppLifecycleState.resumed;
   // switch(state){
   //
   //   case AppLifecycleState.resumed:
@@ -35,7 +34,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
   // set token(value) => _token.value = value;
   // get token => _token.value;
 
-// var controller = Get.put(Globalvariable(),permanent: true);
+var controller = Get.put(Globalvariable(),permanent: true);
 @override
 void onInit() {
   // TODO: implement onInit
@@ -53,7 +52,7 @@ void onClose() {
 
   var url = "https://hostmobilesim.com/api/".obs;
   
-  var prefs = GetStorage();
+  // var prefs = GetStorage();
 
   String baseurl(endpoint) =>url.value+endpoint;
   Future<Response<dynamic>> getdetail(url) async {
@@ -73,10 +72,9 @@ void onClose() {
   Future<Response<dynamic>> gettokendetail(url) async {
     print(url);
     // print(controller.token);
-    print(token);
+    print(Get.find<Globalvariable>().token);
     final response = await get(url, headers: {
-      // "serverid": controller.token,
-      "serverid": token,
+      "serverid": controller.token,
       "Access-Control-Allow-Origin": "*",
       "Connection": "Keep-Alive",
       "Keep-Alive": "timeout=5, max=5000",
@@ -111,13 +109,13 @@ void onClose() {
   Future<Response<dynamic>> posttokendetail(url, Map body) async {
     print(url);
     print(body);
-    // print(controller.token);
-    print(token);
+    print(controller.token);
+    // print(token);
     final response = await post(
       url,
       body,
       headers: {
-        "serverid": token,
+        "serverid": controller.token,
         "Access-Control-Allow-Origin": "*",
         "Connection": "Keep-Alive",
         "Keep-Alive": "timeout=5, max=1000",
@@ -126,8 +124,7 @@ void onClose() {
     );
     print(response.body);
     print({
-      // "serverid": controller.token,
-      "serverid": token,
+      "serverid": controller.token,
       "Access-Control-Allow-Origin": "*",
       "Connection": "Keep-Alive",
       "Keep-Alive": "timeout=5, max=1000",
@@ -156,8 +153,8 @@ void onClose() {
       //   }
       //   Get.offAllNamed("/loginscreen");
       } else {
-        // if (Get.find<Globalvariable>().isInForeground) {
-        if (isInForeground) {
+        if (controller.isInForeground) {
+        // if (isInForeground) {
           CustomAlertDialogloader(
               title: "Error",
               message: cmddetails['message'],
@@ -166,8 +163,8 @@ void onClose() {
       }
     } else {
       if (fail == null) {
-        // if (Get.find<Globalvariable>().isInForeground) {
-        if (isInForeground) {
+        if (controller.isInForeground) {
+        // if (isInForeground) {
           CustomAlertDialogloader(
               title: "Error",
               message: "Connection Error",

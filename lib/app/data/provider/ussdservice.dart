@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 import 'package:flutter/services.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
 import 'package:telephony/telephony.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 
@@ -71,7 +71,7 @@ void smsgetrequest()async{
 }
 
 
-var prefs = GetStorage();
+// var prefs = GetStorage();
 loginprogress(response,{String? endpoint, required Function success, Function? fail}){
   if (response.statusCode == 200) {
     var cmddetails = response.body;
@@ -89,8 +89,8 @@ loginprogress(response,{String? endpoint, required Function success, Function? f
     //     Get.offAllNamed("/loginscreen");
     //   }
     } else {
-      // if (!Get.find<Globalvariable>().isInForeground) {
-      if (!isInForeground) {
+      if (!Get.find<Globalvariable>().isInForeground) {
+      // if (!isInForeground) {
         // CustomAlertDialogloader(
         //     title: "Error",
         //     message: cmddetails['message'],
@@ -99,8 +99,8 @@ loginprogress(response,{String? endpoint, required Function success, Function? f
     }
   } else {
     if (fail == null) {
-      // if (!Get.find<Globalvariable>().isInForeground) {
-      if (!isInForeground) {
+      if (!Get.find<Globalvariable>().isInForeground) {
+      // if (!isInForeground) {
         // CustomAlertDialogloader(
         //     title: "Error",
         //     message: "Connection Error",

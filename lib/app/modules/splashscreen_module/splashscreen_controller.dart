@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/provider/globalvariable.dart';
 import '../../data/provider/smslistener.dart';
@@ -11,8 +12,8 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
-    isInForeground = state == AppLifecycleState.resumed;
+    Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
+    // isInForeground = state == AppLifecycleState.resumed;
     update();
     // switch(state){
     //
@@ -45,12 +46,12 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
   set token(value) => _token.value = value;
   get token => _token.value;
 
-  var prefs = GetStorage();
+  // var prefs = GetStorage();
 
   // var controller = Get.put(Globalvariable(),permanent: true);
   @override
   void onInit() {
-    token = prefs.read('token')??"";
+    getpre();
     print("splashcreen token");
     print(token);
     // TODO: implement onInit
@@ -59,11 +60,17 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
     Future.delayed(const Duration(milliseconds: 1000), () async {
       listing();
       // if (controller.token.isNotEmpty) {
-      if (token.isNotEmpty) {
+      if (token != "user") {
         Get.offAllNamed("/mainpage");
       }  else{
         Get.offAllNamed("/loginscreen");
       }
     });
+  }
+
+  Future<void> getpre() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.reload();
+    token = preferences.getString('token') ?? "user";
   }
 }

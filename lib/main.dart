@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttersimhosting/app/data/provider/globalvariable.dart';
 import 'package:fluttersimhosting/app/data/provider/networkProvider.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+// import 'package:get_storage/get_storage.dart';
 
 import 'app/data/provider/apicall.dart';
 import 'app/data/provider/backgroundservice.dart';
@@ -14,7 +14,7 @@ import 'app/translations/app_translations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GetStorage.init();
+  // await GetStorage.init();
   await initializeService();
   runApp(const MyApp());
 }

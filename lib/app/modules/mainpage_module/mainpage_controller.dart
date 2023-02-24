@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:get_storage/get_storage.dart';
 
 import '../../component/custom_alert_dialog_widget.dart';
 import '../../data/provider/apicall.dart';
@@ -17,11 +18,11 @@ import '../../theme/app_colors.dart';
  * */
 
 class MainpageController extends GetxController with WidgetsBindingObserver {
+  var controller = Get.put(Globalvariable(), permanent: true);
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
-    isInForeground = state == AppLifecycleState.resumed;
+    controller.isInForeground = state == AppLifecycleState.resumed;
     update();
     // switch(state){
     //
@@ -60,7 +61,7 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
   get isloading => _isloading.value;
 
   var apicontroller = Get.put(ApiProvider(), permanent: true);
-  var prefs = GetStorage();
+  // var prefs = GetStorage();
 
   void logout()async{
     isloading = true;
@@ -74,8 +75,9 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     var response = await apicontroller.gettokendetail(apicontroller.url+"logout");
     isloading = false;
     Get.back();
-    apicontroller.loginprogress(response,success:(serverdata){
-      prefs.remove('token');
+    apicontroller.loginprogress(response,success:(serverdata) async {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.remove('token');
       Get.offAllNamed("/loginscreen");
     });
   }
@@ -97,17 +99,17 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
     FetchDetails();
-    Future.doWhile(() async {
-      // value++;
-      await Future.delayed(const Duration(seconds: 10));
-      token = prefs.read('token')??"you";
-      // if (value == 3) {
-      //   print('Finished with $value');
-      //   return false;
-      // }
-      getUSSD();
-      return true;
-    });
+    // Future.doWhile(() async {
+    //   // value++;
+    //   await Future.delayed(const Duration(seconds: 10));
+    //   token = prefs.read('token')??"you";
+    //   // if (value == 3) {
+    //   //   print('Finished with $value');
+    //   //   return false;
+    //   // }
+    //   getUSSD();
+    //   return true;
+    // });
     getUSSD();
   }
 }
