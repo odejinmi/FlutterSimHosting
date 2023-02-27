@@ -1,0 +1,2 @@
+
+var cost_token="";

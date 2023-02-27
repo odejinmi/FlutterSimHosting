@@ -55,8 +55,8 @@ Future<void> initializeService() async {
       isForegroundMode: true,
 
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'Hosy Mobile Sim',
-      initialNotificationContent: 'Auto Start Service',
+      initialNotificationTitle: 'Host Mobile Sim',
+      initialNotificationContent: 'Listening Service',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -125,8 +125,8 @@ void onStart(ServiceInstance service) async {
         /// the notification id must be equals with AndroidConfiguration when you call configure() method.
         flutterLocalNotificationsPlugin.show(
           888,
-          'COOL SERVICE',
-          'Awesome ${DateTime.now()}',
+          'HOSTMOBILE SERVICE',
+          'Listening ${DateTime.now()}',
           const NotificationDetails(
             android: AndroidNotificationDetails(
               'my_foreground',
@@ -172,4 +172,9 @@ void onStart(ServiceInstance service) async {
       },
     );
   });
+}
+
+
+void stopService(ServiceInstance service) async {
+  service.stopSelf();
 }

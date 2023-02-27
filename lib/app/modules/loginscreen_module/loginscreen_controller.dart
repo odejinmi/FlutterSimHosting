@@ -69,6 +69,9 @@ class loginscreenController extends GetxController with WidgetsBindingObserver {
     isloading = false;
     apicontroller.loginprogress(response,success:(serverdata) async {
       token = serverdata['token'];
+
+      print("token");
+      print(token);
       // token = serverdata['token'];
       update();
       prefs.write('token', serverdata['token']);

@@ -64,7 +64,7 @@ void onClose() {
   }
   Future<Response<dynamic>> gettokendetail(url) async {
     print(url);
-    final response = await get(url, headers: {
+    Map <String, String> header={
       "serverid": token,
       "Access-Control-Allow-Origin": "*",
       "Connection": "Keep-Alive",
@@ -72,7 +72,11 @@ void onClose() {
       HttpHeaders.contentTypeHeader: "application/json",
       HttpHeaders.acceptHeader: "application/json",
       HttpHeaders.connectionHeader: "keep-alive"
-    });
+    };
+
+    print("header");
+    print(header);
+    final response = await get(url, headers: header);
     print(response.body);
     return response;
 
