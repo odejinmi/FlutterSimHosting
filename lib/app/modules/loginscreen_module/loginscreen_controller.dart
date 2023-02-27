@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../data/provider/apicall.dart';
 import '../../utils/strings.dart';
@@ -36,7 +38,13 @@ class loginscreenController extends GetxController with WidgetsBindingObserver {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    permissionrequest();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future<void> permissionrequest() async {
+    await Permission.phone.request();
+     Permission.location.request();
   }
 
   @override
@@ -68,14 +76,11 @@ class loginscreenController extends GetxController with WidgetsBindingObserver {
     var response = await apicontroller.postdetail(apicontroller.url+"authenticate",body);
     isloading = false;
     apicontroller.loginprogress(response,success:(serverdata) async {
-      token = serverdata['token'];
-
-      print("token");
-      print(token);
-      // token = serverdata['token'];
-      update();
       prefs.write('token', serverdata['token']);
-      Get.offAllNamed("/mainpage");
+      final pref = await SharedPreferences.getInstance();
+      pref.setString('token', serverdata['token']).then((value) {
+        Get.offAllNamed("/mainpage");
+      });
     });
   }
 }

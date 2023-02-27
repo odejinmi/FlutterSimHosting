@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
 
-import 'package:flutter/services.dart';
-// import 'package:get_storage/get_storage.dart';
 import 'package:telephony/telephony.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 
@@ -21,9 +19,13 @@ void getUSSD()async{
   loginprogress(response,success:(serverdata) async {
     smsgetrequest();
     var simslot = serverdata["data_sim"];
+    print("simslot");
+    print(simslot);
     try {
       String? _res = await UssdAdvanced.sendAdvancedUssd(
-          code: serverdata["data"], subscriptionId: 1);
+          code: serverdata["data"], subscriptionId: int.tryParse(simslot.toString())??1);
+      print("ussd result");
+      print(_res);
       if (_res != null) {
         postUSSD({
           "response": _res

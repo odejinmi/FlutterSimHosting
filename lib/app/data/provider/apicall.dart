@@ -64,8 +64,9 @@ void onClose() {
   }
   Future<Response<dynamic>> gettokendetail(url) async {
     print(url);
+    String sola = await token();
     Map <String, String> header={
-      "serverid": token,
+      "serverid": sola,
       "Access-Control-Allow-Origin": "*",
       "Connection": "Keep-Alive",
       "Keep-Alive": "timeout=5, max=5000",
@@ -102,11 +103,12 @@ void onClose() {
   Future<Response<dynamic>> posttokendetail(url, Map body) async {
     print(url);
     print(body);
+    String sola = await token();
     final response = await post(
       url,
       body,
       headers: {
-        "serverid": token,
+        "serverid": sola,
         "Access-Control-Allow-Origin": "*",
         "Connection": "Keep-Alive",
         "Keep-Alive": "timeout=5, max=1000",

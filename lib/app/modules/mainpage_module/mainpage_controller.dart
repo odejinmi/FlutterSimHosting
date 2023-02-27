@@ -83,7 +83,8 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     isloading = false;
     Get.back();
     apicontroller.loginprogress(response,success:(serverdata) async {
-      prefs.remove('token');
+      // stopService(services);
+      removetoken();
       Get.offAllNamed("/loginscreen");
     });
   }
@@ -108,7 +109,6 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     // Future.doWhile(() async {
     //   // value++;
     //   await Future.delayed(const Duration(seconds: 10));
-    //   token = prefs.read('token')??"you";
     //   // if (value == 3) {
     //   //   print('Finished with $value');
     //   //   return false;

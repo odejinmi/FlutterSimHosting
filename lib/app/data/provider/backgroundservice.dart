@@ -16,9 +16,9 @@ import 'ussdservice.dart';
 
 
 var prefs = GetStorage();
-final service = FlutterBackgroundService();
 Future<void> initializeService() async {
 
+  final service = FlutterBackgroundService();
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'my_foreground', // id
@@ -89,8 +89,10 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
+late ServiceInstance services;
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  services = service;
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
 
@@ -142,7 +144,6 @@ void onStart(ServiceInstance service) async {
           title: "Auto Start Service",
           content: "",
         );
-        // controller.token = await prefs.read('token')??"you";
         getUSSD();
         uploadsms();
       }
@@ -173,7 +174,6 @@ void onStart(ServiceInstance service) async {
     );
   });
 }
-
 
 void stopService(ServiceInstance service) async {
   service.stopSelf();

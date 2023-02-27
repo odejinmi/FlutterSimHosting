@@ -45,12 +45,10 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
   // var prefs = GetStorage();
 
   gettoken() async {
-    // prefs.write("token", "aZ6eYmD0qXEvC3t9YZBtn4INopZiMP3K7zu2pbiZSpdbTZa3e9WIsWvwcCJ6");
-    // token = prefs.read('token')??"you";
     Future.delayed(const Duration(seconds: 10), () async {
-      // if (controller.token.isNotEmpty) {
-      print(token);
-      if (token != "you") {
+
+      String sola = await token();
+      if (sola != "you") {
         Get.offAllNamed("/mainpage");
       }  else{
         Get.offAllNamed("/loginscreen");
