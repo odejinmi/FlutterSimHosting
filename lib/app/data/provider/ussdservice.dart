@@ -5,9 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:telephony/telephony.dart';
 import 'package:ussd_advanced/ussd_advanced.dart';
 
-import '../../component/custom_alert_dialog.dart';
+import '../../utils/strings.dart';
 import 'apicall.dart';
-import 'globalvariable.dart';
 
 class Ussdservice{
 
@@ -79,17 +78,18 @@ loginprogress(response,{String? endpoint, required Function success, Function? f
     var servermessage = cmddetails['message'] ?? "user";
     if (cmddetails['status'] == 1) {
       success(cmddetails);
-    // } else if (servermessage == "Invalid token supplied"){
-    //   prefs.remove('token');
-    //   if (!Get.find<Globalvariable>().isInForeground) {
-    //     CustomAlertDialogloader(
-    //         title: "Error",
-    //         message: cmddetails['message'],
-    //         negativeBtnText: 'Continue');
-    //     Get.offAllNamed("/loginscreen");
-    //   }
+    } else if (servermessage == "Invalid token supplied"){
+
+      // prefs.remove('token');
+      // if (!Get.find<Globalvariable>().isInForeground) {
+      //   CustomAlertDialogloader(
+      //       title: "Error",
+      //       message: cmddetails['message'],
+      //       negativeBtnText: 'Continue');
+      //   Get.offAllNamed("/loginscreen");
+      // }
     } else {
-      if (!Get.find<Globalvariable>().isInForeground) {
+      if (!isInForeground) {
       // if (!isInForeground) {
         // CustomAlertDialogloader(
         //     title: "Error",
@@ -99,7 +99,7 @@ loginprogress(response,{String? endpoint, required Function success, Function? f
     }
   } else {
     if (fail == null) {
-      if (!Get.find<Globalvariable>().isInForeground) {
+      if (!isInForeground) {
       // if (!isInForeground) {
         // CustomAlertDialogloader(
         //     title: "Error",

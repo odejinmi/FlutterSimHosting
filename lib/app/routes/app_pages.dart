@@ -8,7 +8,6 @@ import '../../app/modules/loginscreen_module/loginscreen_bindings.dart';
 import '../../app/modules/loginscreen_module/loginscreen_page.dart';
 import 'package:get/get.dart';
 
-import '../data/provider/globalvariable.dart';
 part './app_routes.dart';
 /// GetX Generator - fb.com/htngu.99
 ///

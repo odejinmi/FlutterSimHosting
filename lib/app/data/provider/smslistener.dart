@@ -10,12 +10,8 @@ import '../../database/database.dart';
 import 'apicall.dart';
 
 backgroundMessageHandler(SmsMessage message) async {
+  savedata(message);
   //Handle background message
-  uploadtoserver({
-    'sender': message.address,
-    'message': message.body,
-    'time': message.date.toString(),
-  });
 }
 class SmsListener {
 
@@ -25,13 +21,9 @@ final Telephony telephony = Telephony.instance;
 void listing(){
   telephony.listenIncomingSms(
       onNewMessage: (SmsMessage message) async {
-
+        savedata(message);
         // Handle message
-        uploadtoserver({
-          'sender': message.address,
-          'message': message.body,
-          'time': message.date.toString(),
-        });
+
 
       },
       onBackgroundMessage: backgroundMessageHandler
@@ -39,17 +31,9 @@ void listing(){
 }
 
 
-var apicontroller = Get.put(ApiProvider(), permanent: true);
-void uploadtoserver(Map body)async{
-  print("body");
-  print(body);
-  // isloading = true;
-  var response = await apicontroller.posttokendetail(apicontroller.url+"hook/inbox",body);
-  // isloading = false;
-  apicontroller.loginprogress(response,success:(serverdata) async {
-    var airtimemodel = Databasemodel(code: "FROM: ${body["sender"]}",timestamp: body["time"],
-        processSeen: "not-seen",reference: "",response: "MESSAGE: ${body["message"]}", type: "INBOX");
-      await insertContact(
-      airtimemodel, databasename.TABLE_PROCESS);
-  });
+Future<void> savedata(SmsMessage message) async {
+  var airtimemodel = Databasemodel(code: message.address, timestamp: message.date.toString(),
+      processSeen: "not-seen",reference: "",response: message.body, type: "INBOX", uploaded: "0");
+ await insertContact(airtimemodel, databasename.TABLE_PROCESS);
 }
+var apicontroller = Get.put(ApiProvider(), permanent: true);

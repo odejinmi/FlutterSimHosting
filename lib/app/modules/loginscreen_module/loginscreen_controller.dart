@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersimhosting/app/data/provider/globalvariable.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:get_storage/get_storage.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../data/provider/apicall.dart';
+import '../../utils/strings.dart';
 /// GetX Template Generator - fb.com/htngu.99
 ///
 
@@ -12,7 +11,7 @@ class loginscreenController extends GetxController with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
+    isInForeground = state == AppLifecycleState.resumed;
     // isInForeground = state == AppLifecycleState.resumed;
     update();
     // switch(state){
@@ -63,19 +62,16 @@ class loginscreenController extends GetxController with WidgetsBindingObserver {
   get passwordController => _passwordController.value;
 
   var apicontroller = Get.put(ApiProvider(), permanent: true);
-  // var prefs = GetStorage();
+  var prefs = GetStorage();
   void login(Map body)async{
     isloading = true;
     var response = await apicontroller.postdetail(apicontroller.url+"authenticate",body);
     isloading = false;
     apicontroller.loginprogress(response,success:(serverdata) async {
-      Get.find<Globalvariable>().token = serverdata['token'];
+      token = serverdata['token'];
       // token = serverdata['token'];
       update();
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      await preferences.reload();
-      await preferences.setString('token', serverdata['token']);
-      // prefs.write('token', serverdata['token']);
+      prefs.write('token', serverdata['token']);
       Get.offAllNamed("/mainpage");
     });
   }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttersimhosting/app/database/databasemodel.dart';
 import 'package:get/get.dart';
 
-import '../../data/provider/globalvariable.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/strings.dart';
 import 'mainpage_controller.dart';
@@ -70,28 +69,30 @@ class MainpagePage extends GetView<MainpageController> {
           color: colorNotSeenTranslucent,
           child: Center(child: Text(youhaveno.tr, style: const TextStyle(color: Colors.white),))):
       ListView.builder(
-        scrollDirection: Axis.horizontal,
+        scrollDirection: Axis.vertical,
         itemBuilder: (context, position) {
           Databasemodel samuel = controller.processes[position];
           return GestureDetector(
               onTap: () {
-                controller.updateseen(samuel);
+                Get.toNamed("/messagedetails", arguments: samuel);
+                controller.updatesee(samuel);
               },
               child:
-              Obx(() =>  Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: samuel.processSeen?colorSeenTranslucent:colorNotSeenTranslucent,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    color: samuel.processSeen == "seen"?colorSeenTranslucent:colorNotSeenTranslucent,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                     // border: Border.all(color: primarycolour.value)
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      samuel.code,
+                      "FROM: ${samuel.code}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: const TextStyle(
@@ -100,16 +101,16 @@ class MainpagePage extends GetView<MainpageController> {
                           fontSize: 20.0),
                     ),
                     Text(
-                      samuel.response,
+                      "MESSAGE: ${samuel.response}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: const TextStyle(
                           color: colorPrimaryDark,
-                          fontSize: 20.0),
+                          fontSize: 15.0),
                     ),
                   ],
                 ),
-              )));
+              ));
         },
         itemCount: controller.processes.length,
       )),

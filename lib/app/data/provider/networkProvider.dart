@@ -6,9 +6,42 @@ import 'package:flutter/material.dart';
 import 'package:fluttersimhosting/app/theme/app_colors.dart';
 import 'package:get/get.dart';
 
+import '../../utils/strings.dart';
 
 
-class NetworkProvider extends GetxController {
+
+
+class NetworkProvider extends GetxController with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    isInForeground = state == AppLifecycleState.resumed;
+    // isInForeground = state == AppLifecycleState.resumed;
+    update();
+    // switch(state){
+    //
+    //   case AppLifecycleState.resumed:
+    //     Get.find<Globalvariable>().isInForeground = true;
+    //     break;
+    //   case AppLifecycleState.inactive:
+    //     Get.find<Globalvariable>().isInForeground = false;
+    //     break;
+    //   case AppLifecycleState.paused:
+    //     Get.find<Globalvariable>().isInForeground = false;
+    //     break;
+    //   case AppLifecycleState.detached:
+    //     Get.find<Globalvariable>().isInForeground = false;
+    //     // TODO: Handle this case.
+    //     break;
+    // }
+  }
+
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
   final _networkConnectivity = Connectivity();
   final _controller = StreamController.broadcast();
   Stream get myStream => _controller.stream;
@@ -76,5 +109,6 @@ class NetworkProvider extends GetxController {
       // 3.
       // Snackbar.showMessage(string);
     });
+    WidgetsBinding.instance.addObserver(this);
   }
 }

@@ -8,15 +8,16 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
-import 'globalvariable.dart';
+import 'uploadsms.dart';
 import 'ussdservice.dart';
 
 
+
+var prefs = GetStorage();
+final service = FlutterBackgroundService();
 Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
 
   /// OPTIONAL, using custom notification channel id
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -81,14 +82,9 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  await preferences.reload();
-  final log = preferences.getStringList('log') ?? <String>[];
+  final log = prefs.read('log') ?? <String>[];
   log.add(DateTime.now().toIso8601String());
-  await preferences.setStringList('log', log);
-  // final log = prefs.read('log') ?? <String>[];
-  // log.add(DateTime.now().toIso8601String());
-  // prefs.write('log', log);
+  await prefs.write('log', log);
 
   return true;
 }
@@ -101,9 +97,7 @@ void onStart(ServiceInstance service) async {
   // For flutter prior to version 3.0.0
   // We have to register the plugin manually
 
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  await preferences.setString("hello", "world");
-  // prefs.write("hello", "world");
+  await prefs.write("hello", "world");
 
   /// OPTIONAL when use custom notification
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -123,7 +117,6 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  var controller = Get.put(Globalvariable(), permanent: true);
   // bring to foreground
   Timer.periodic(const Duration(seconds: 10), (timer) async {
     if (service is AndroidServiceInstance) {
@@ -138,7 +131,7 @@ void onStart(ServiceInstance service) async {
             android: AndroidNotificationDetails(
               'my_foreground',
               'MY FOREGROUND SERVICE',
-              icon: 'ic_bg_service_small',
+              icon: '@mipmap/ic_launcher',
               ongoing: true,
             ),
           ),
@@ -146,12 +139,12 @@ void onStart(ServiceInstance service) async {
 
         // if you don't using custom notification, uncomment this
         service.setForegroundNotificationInfo(
-          title: "Host Mobile Sim",
-          content: "Auto Start Service",
+          title: "Auto Start Service",
+          content: "",
         );
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        controller.token = preferences.getString('token')??"you";
+        // controller.token = await prefs.read('token')??"you";
         getUSSD();
+        uploadsms();
       }
     }
 

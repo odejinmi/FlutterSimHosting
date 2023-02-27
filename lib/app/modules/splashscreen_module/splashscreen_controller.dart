@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
-import '../../data/provider/globalvariable.dart';
 import '../../data/provider/smslistener.dart';
+import '../../utils/strings.dart';
 /// GetX Template Generator - fb.com/htngu.99
 ///
 
@@ -12,7 +11,7 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    Get.find<Globalvariable>().isInForeground = state == AppLifecycleState.resumed;
+    isInForeground = state == AppLifecycleState.resumed;
     // isInForeground = state == AppLifecycleState.resumed;
     update();
     // switch(state){
@@ -42,35 +41,28 @@ class SplashscreenController extends GetxController with WidgetsBindingObserver 
   set obj(value) => _obj.value = value;
   get obj => _obj.value;
 
-    var _token = "".obs;
-  set token(value) => _token.value = value;
-  get token => _token.value;
 
   // var prefs = GetStorage();
 
-  // var controller = Get.put(Globalvariable(),permanent: true);
-  @override
-  void onInit() {
-    getpre();
-    print("splashcreen token");
-    print(token);
-    // TODO: implement onInit
-    super.onInit();
-    WidgetsBinding.instance.addObserver(this);
-    Future.delayed(const Duration(milliseconds: 1000), () async {
-      listing();
+  gettoken() async {
+    // prefs.write("token", "aZ6eYmD0qXEvC3t9YZBtn4INopZiMP3K7zu2pbiZSpdbTZa3e9WIsWvwcCJ6");
+    // token = prefs.read('token')??"you";
+    Future.delayed(const Duration(seconds: 10), () async {
       // if (controller.token.isNotEmpty) {
-      if (token != "user") {
+      print(token);
+      if (token != "you") {
         Get.offAllNamed("/mainpage");
       }  else{
         Get.offAllNamed("/loginscreen");
       }
+      listing();
     });
   }
-
-  Future<void> getpre() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.reload();
-    token = preferences.getString('token') ?? "user";
+  @override
+  void onInit() {
+    gettoken();
+    // TODO: implement onInit
+    super.onInit();
+    WidgetsBinding.instance.addObserver(this);
   }
 }

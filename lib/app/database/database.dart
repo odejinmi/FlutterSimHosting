@@ -27,6 +27,7 @@ Future<Database> Databasequary() async {
             '${databasename.COLUMN_RESPONSE} TEXT, '
             '${databasename.COLUMN_PROCESSREFRENCE} TEXT, '
             '${databasename.COLUMN_SEEN} TEXT, '
+            '${databasename.COLUMN_UPLOAD} TEXT DEFAULT 0, '
             '${databasename.COLUMN_TIMESTAMP} TEXT)',
       );
     }));
@@ -35,7 +36,7 @@ Future<Database> Databasequary() async {
 
 
 // Define a function that inserts dogs into the database
-Future<void> insertContact(dog, dogs) async {
+Future<int> insertContact(dog, dogs) async {
   // Get a reference to the database.
   final db = await Databasequary();
 
@@ -43,7 +44,7 @@ Future<void> insertContact(dog, dogs) async {
   // `conflictAlgorithm` to use in case the same dog is inserted twice.
   //
   // In this case, replace any previous data.
-  await db.insert(
+  return await db.insert(
     dogs,
     dog.toJson(),
     conflictAlgorithm: ConflictAlgorithm.replace,
@@ -102,6 +103,21 @@ Future<void> insertsingleContact(tablename, columns, values) async {
 }
 
 Future<void> updateContact(Databasemodel dog) async {
+  // Get a reference to the database.
+  final db = await Databasequary();
+
+  // Update the given Dog.
+  await db.update(
+    'dogs',
+    dog.toJson(),
+    // Ensure that the Dog has a matching id.
+    where: 'number = ?',
+    // Pass the Dog's id as a whereArg to prevent SQL injection.
+    whereArgs: [dog.response],
+  );
+}
+
+Future<void> updateupload(Databasemodel dog) async {
   // Get a reference to the database.
   final db = await Databasequary();
 

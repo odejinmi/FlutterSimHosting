@@ -1,6 +1,6 @@
 {
-    "name": "fluttersimhosting",
-    "short_name": "fluttersimhosting",
+    "name": "Host Mobile Sim",
+    "short_name": "Host Mobile Sim",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

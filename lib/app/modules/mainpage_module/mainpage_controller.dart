@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttersimhosting/app/utils/strings.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:get_storage/get_storage.dart';
+import 'package:get_storage/get_storage.dart';
 
 import '../../component/custom_alert_dialog_widget.dart';
 import '../../data/provider/apicall.dart';
-import '../../data/provider/globalvariable.dart';
+import '../../data/provider/backgroundservice.dart';
+import '../../data/provider/uploadsms.dart';
 import '../../data/provider/ussdservice.dart';
 import '../../database/database.dart';
 import '../../database/databasemodel.dart';
@@ -18,28 +19,27 @@ import '../../theme/app_colors.dart';
  * */
 
 class MainpageController extends GetxController with WidgetsBindingObserver {
-  var controller = Get.put(Globalvariable(), permanent: true);
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    controller.isInForeground = state == AppLifecycleState.resumed;
     update();
-    // switch(state){
-    //
-    //   case AppLifecycleState.resumed:
-    //     Get.find<Globalvariable>().isInForeground = true;
-    //     break;
-    //   case AppLifecycleState.inactive:
-    //     Get.find<Globalvariable>().isInForeground = false;
-    //     break;
-    //   case AppLifecycleState.paused:
-    //     Get.find<Globalvariable>().isInForeground = false;
-    //     break;
-    //   case AppLifecycleState.detached:
-    //     Get.find<Globalvariable>().isInForeground = false;
-    //     // TODO: Handle this case.
-    //     break;
-    // }
+    switch(state){
+
+      case AppLifecycleState.resumed:
+        isInForeground = true;
+        FetchDetails();
+        break;
+      case AppLifecycleState.inactive:
+        isInForeground = false;
+        break;
+      case AppLifecycleState.paused:
+        isInForeground = false;
+        break;
+      case AppLifecycleState.detached:
+        isInForeground = false;
+        // TODO: Handle this case.
+        break;
+    }
   }
 
 
@@ -48,20 +48,27 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
   }
 
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    FetchDetails();
+  }
+
   final _obj = ''.obs;
   set obj(value) => _obj.value = value;
   get obj => _obj.value;
 
   final _processes = [].obs;
   set processes(value) => _processes.value = value;
-  get processes => _obj.value;
+  get processes => _processes.value;
 
   final _isloading = false.obs;
   set isloading(value) => _isloading.value = value;
   get isloading => _isloading.value;
 
   var apicontroller = Get.put(ApiProvider(), permanent: true);
-  // var prefs = GetStorage();
+  var prefs = GetStorage();
 
   void logout()async{
     isloading = true;
@@ -76,17 +83,16 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     isloading = false;
     Get.back();
     apicontroller.loginprogress(response,success:(serverdata) async {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.remove('token');
+      prefs.remove('token');
       Get.offAllNamed("/loginscreen");
     });
   }
 
   void FetchDetails() async {
-    processes = databasemodelFromJson(jsonEncode(await fetchallContact("process")));
-    print(processes);
+    await initializeService();
+    processes = databasemodelFromJson(jsonEncode(await fetchallContact(databasename.TABLE_PROCESS)));
   }
-  void updateseen(Databasemodel dog) async {
+  void updatesee(Databasemodel dog) async {
     Databasemodel sola = dog;
     sola.processSeen = "seen";
     updateseen(sola);
@@ -108,8 +114,10 @@ class MainpageController extends GetxController with WidgetsBindingObserver {
     //   //   return false;
     //   // }
     //   getUSSD();
+    //   uploadsms();
     //   return true;
     // });
     getUSSD();
+    uploadsms();
   }
 }
